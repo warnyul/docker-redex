@@ -1,6 +1,8 @@
 # docker-redex
 ![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/warnyul/redex/latest) ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/warnyul/redex/latest) ![MicroBadger Layers (tag)](https://img.shields.io/microbadger/layers/warnyul/redex/latest) [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 
+Docker image for [Facebook's ReDex](https://fbredex.com) Android Bytecode Optimizer.
+
 ## Usage
 
 You can run ReDex with a single command:
@@ -13,7 +15,7 @@ docker run --rm -v "$(pwd)":"$(pwd)" -w "$(pwd)" warnyul/redex redex ./myapp.apk
 ```
 git clone https://github.com/warnyul/docker-redex.git
 cd docker-redex
-# Use -u to update redex to the latest commit before build
+# Use -u to update redex to the latest commit before build it.
 ./build.sh -u
 ```
 

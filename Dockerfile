@@ -8,7 +8,7 @@ LABEL description="Facebook's Android Bytecode Optimizer"
 COPY redex /redex
 
 RUN apt-get -y update && \
-    apt-get install -y software-properties-common curl && \
+    apt-get -y install software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
     apt-get -y install \
@@ -35,18 +35,20 @@ RUN apt-get -y update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV LD_LIBRARY_PATH /usr/local/lib
+ENV PATH ${PATH}:${LD_LIBRARY_PATH}
 ENV CXX g++-5
 ENV TRACE 0
 ENV BOOST_DEBUG 0
 
 WORKDIR /redex
 
-RUN ./get_boost.sh || cat /redex/boost_1_71_0/bootstrap.log 2>&1
-
-RUN autoreconf -ivf && \
+RUN ./get_boost.sh && \
+    autoreconf -ivf && \
     ./configure CXX='g++-5' && \
     make -j4 && \
     make install && \
-    make clean
+    make clean && \
+    rm -rf boost_1_71_0.tar.bz2 && \
+    rm -rf redex.tar.gz
 
 CMD ["redex"]

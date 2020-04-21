@@ -7,7 +7,18 @@ Docker image for [Facebook's ReDex](https://fbredex.com) Android Bytecode Optimi
 
 You can run ReDex with a single command:
 ```
-docker run --rm -v "$(pwd)":"$(pwd)" -w "$(pwd)" warnyul/redex redex ./myapp.apk -o ./redex.apk
+docker run --rm -v "$(pwd)":"$(pwd)" -w "$(pwd)" warnyul/redex redex -o ./redex.apk ./myapp.apk
+```
+
+If you would like to pass `android.jar` or `proguard` files to redex, you could do it without install the SDK on your machine.
+You can find Android SDK in /opt/android-sdk-linux folder
+
+```
+docker run --rm -v "$(pwd)":"$(pwd)" -w "$(pwd)" warnyul/redex redex \
+   -o ./redex.apk \
+   -j /opt/android-sdk-linux/platforms/android-29/android.jar \
+   -P /opt/android-sdk-linux/tools/proguard/proguard-android-optimize.txt \
+   ./myapp.apk
 ```
 
 ## Build

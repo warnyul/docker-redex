@@ -30,20 +30,20 @@ RUN apt-get -y update && \
     wget && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.5 1 && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 2 && \
+    /redex/get_boost.sh && \
+    apt-get -y remove bzip2 wget && \
     apt-get autoremove && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 ENV LD_LIBRARY_PATH /usr/local/lib
-ENV PATH ${PATH}:${LD_LIBRARY_PATH}
 ENV CXX g++-5
 ENV TRACE 0
 ENV BOOST_DEBUG 0
 
 WORKDIR /redex
 
-RUN ./get_boost.sh && \
-    autoreconf -ivf && \
+RUN autoreconf -ivf && \
     ./configure CXX='g++-5' && \
     make -j4 && \
     make install && \

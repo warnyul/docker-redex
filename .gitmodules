@@ -1,3 +1,4 @@
 [submodule "redex"]
 	path = redex
 	url = https://github.com/facebook/redex
+	branch = stable

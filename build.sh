@@ -65,9 +65,8 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-git submodule update --init
-
 if [[ ${UPDATE_REDEX} ]]; then
+    git submodule update --init
     git submodule update --remote
 fi
 

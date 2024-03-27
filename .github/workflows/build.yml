@@ -20,4 +20,6 @@ jobs:
       - name: Build the Docker image
         shell: bash
         run: |
+          ls -al redex_main
+          ls -al redex_stable
           ./build.sh

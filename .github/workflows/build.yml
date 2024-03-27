@@ -1,19 +1,19 @@
 name: build
 
 on:
-    workflow_dispatch:
-    push:
-      branches: [ main ]
-    pull_request:
-      branches: [ main ]
-  
-  jobs:
-  
-    build:
-      if: "! contains(toJSON(github.event.commits.*.message), 'skip ci')"
-      runs-on: ubuntu-22.04
-  
-      steps:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    if: "! contains(toJSON(github.event.commits.*.message), 'skip ci')"
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           submodules: true

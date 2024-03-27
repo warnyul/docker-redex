@@ -15,8 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
-          submodules: 'recursive'
-          token: ${{ secrets.PAT }}
+          submodules: 'true'
       - name: Generate build matrix
         id: generate
         shell: bash
@@ -34,8 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
-          submodules: 'recursive'
-          token: ${{ secrets.PAT }}
+          submodules: 'true'
       - name: Docker Hub login
         shell: bash
         run: |

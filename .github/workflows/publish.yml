@@ -15,7 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
-          submodules: 'true'
+          submodules: true
+          fetch-depth: 2
       - name: Generate build matrix
         id: generate
         shell: bash
@@ -33,7 +34,8 @@ jobs:
     steps:
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
-          submodules: 'true'
+          submodules: true
+          fetch-depth: 2
       - name: Docker Hub login
         shell: bash
         run: |

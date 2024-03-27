@@ -5,6 +5,8 @@ read -r -d '' USAGE <<- EOM
     Usage: ./build.sh [OPTIONS]\n
     \n
     Options:\n
+    --build-tools-version=VERSION \t Android build tools version. Default: 34.0.0\n
+    --channel=CHANNEL \t Redex branch master or stable default stable. Default: stable
     -u, --update \t Update git submodules before build\n
     -lp --local-push \t Push to a local repository\n
     -l, --latest \t Tag image as latest
@@ -21,13 +23,26 @@ LOCAL_PUSH=false
 LATEST=false
 PUSH=false
 UPDATE_REDEX=false
-STABLE=true
-VERSION_PREFIX=stable
+REDEX_BRANCH=stable
+BUILD_TOOLS_VERSION=24.0.1
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -m|--master)
-            STABLE=false
+        --build-tools-version=*)
+            BUILD_TOOLS_VERSION="${1#*=}"
+            if [ -z $BUILD_TOOLS_VERSION ]; then
+                echo -e "\n --build-tools-version is required.\n See './build.sh --help'.\n"
+                echo -e "$USAGE"
+                exit 1
+            fi
+        ;;
+        --channel=*)
+            REDEX_BRANCH="${1#*=}"
+            if [ -z $REDEX_BRANCH ]; then
+                echo -e "\n --channel is required.\n See './build.sh --help'.\n"
+                echo -e "$USAGE"
+                exit 1
+            fi
         ;;
         -u|--update)
             UPDATE_REDEX=true
@@ -43,43 +58,48 @@ while [[ $# -gt 0 ]]; do
         ;;
         -h|--help|*)
             echo -e "\n Unknown argument: '$1'.\n See './build.sh --help'.\n"
-            echo -e ${USAGE}
+            echo -e "$USAGE"
             exit 1
         ;;
     esac
     shift
 done
 
-if [[ ${STABLE} ]]; then
-    git submodule set-branch -b stable redex 
-else
-    git submodule set-branch -b master redex 
-fi
-
-git submodule update --init
+VERSION_PREFIX=$REDEX_BRANCH
 
 if [[ ${UPDATE_REDEX} ]]; then
-    git submodule update --recursive --remote
+    git submodule update --init
+    git submodule update --remote
 fi
 
 # Build
-COMMIT_HASH=$(git ls-tree master redex | cut -f 1 | cut -f 3 -d' ')
-VERSION=${VERSION_PREFIX}-${COMMIT_HASH}
-docker build -t "${IMAGE}:${VERSION}" .
+COMMIT_HASH=$(git ls-tree "$REDEX_BRANCH" redex | cut -f 1 | cut -f 3 -d' ')
+BASE_IMAGE="warnyul/android-build-tools:${BUILD_TOOLS_VERSION}-bionic-openjdk17"
+docker pull "$BASE_IMAGE"
+docker tag "$BASE_IMAGE" base-image
+VERSION="${VERSION_PREFIX}-${COMMIT_HASH}-androidbuildtools${BUILD_TOOLS_VERSION}-bionic-openjdk17"
+NO_CACHE_ARG=""
+if [ "$PUSH" == "true" ]; then
+    NO_CACHE_ARG="--no-cache"
+fi
+docker build $NO_CACHE_ARG \
+    --build-arg="${REDEX_BRANCH}" \
+    --build-arg="${BUILD_TOOLS_VERSION}" \
+    -t "${IMAGE}:${VERSION}" .
 
 # Publish to a local repo
-if ${LOCAL_PUSH}; then
+if [ "${LOCAL_PUSH}" == "true" ]; then
     docker run -d -p 5000:5000 --restart=always --name registry registry 2> /dev/null
     docker tag "${IMAGE}:${VERSION}" "${LOCAL_IMAGE}:${VERSION}"
     docker tag "${IMAGE}:${VERSION}" ${LOCAL_IMAGE}
     docker push ${LOCAL_IMAGE}
 fi
 
-if [[ $LATEST ]]; then
+if [ "$LATEST" == "true" ]; then
     docker tag "${IMAGE}:${VERSION}" "${IMAGE}:latest"
 fi
 
 # Publish to Docker Hub
-if ${PUSH}; then
-    docker push warnyul/redex
+if [ "$PUSH" == "true" ]; then
+    docker image push --all-tags "$IMAGE"
 fi

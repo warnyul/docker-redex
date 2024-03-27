@@ -1,4 +1,8 @@
-[submodule "redex"]
-	path = redex
+[submodule "redex_stable"]
+	path = redex_stable
 	url = https://github.com/facebook/redex
 	branch = stable
+[submodule "redex_main"]
+	path = redex_main
+	url = https://github.com/facebook/redex
+	branch = main

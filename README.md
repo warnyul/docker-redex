@@ -16,7 +16,7 @@ You can find Android SDK in /opt/android-sdk-linux folder
 ```
 docker run --rm -v "$(pwd)":"$(pwd)" -w "$(pwd)" warnyul/redex redex \
    -o ./redex.apk \
-   -j /opt/android-sdk-linux/platforms/android-29/android.jar \
+   -j /opt/android-sdk-linux/platforms/android-34/android.jar \
    -P /opt/android-sdk-linux/tools/proguard/proguard-android-optimize.txt \
    ./myapp.apk
 ```
@@ -34,7 +34,7 @@ All image will be tagged with the redex's commit hash to identify builds.
 
 ## License
 
-    Copyright 2020 Balázs Varga
+    Copyright 2020-2024 Balázs Varga
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

@@ -1,0 +1,52 @@
+name: publish
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'  # Run every day at 1 AM
+
+jobs:
+  buildMatrix:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    outputs:
+      BUILD_MATRIX: ${{ steps.generate.outputs.BUILD_MATRIX }}
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+        with:
+          submodules: true
+      - name: Generate build matrix
+        id: generate
+        shell: bash
+        run: |
+          ./generateBuildMatrix.sh
+  publish: 
+    runs-on: ubuntu-22.04
+    needs:
+      - buildMatrix
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        channelAndAgp: ${{ fromJson(needs.buildMatrix.outputs.BUILD_MATRIX) }}
+    steps:
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+        with:
+          submodules: true
+      - name: Docker Hub login
+        shell: bash
+        run: |
+          docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Publish
+        shell: bash
+        run: |
+          ./publish.sh ${{ matrix.channelAndAgp }}
+      - name: Docker Hub logout
+        if: always()
+        shell: bash
+        run: |
+          docker logout

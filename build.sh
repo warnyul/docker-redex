@@ -72,7 +72,7 @@ if [[ ${UPDATE_REDEX} ]]; then
 fi
 
 # Build
-COMMIT_HASH=$(git ls-tree HEAD "redex_${REDEX_BRANCH}" | cut -f 1 | cut -f 3 -d' ')
+COMMIT_HASH=$(git submodule status | grep "redex_${REDEX_BRANCH}" | cut -d' ' -f2)
 BASE_IMAGE="warnyul/android-build-tools:${BUILD_TOOLS_VERSION}-bionic-openjdk17"
 docker pull "$BASE_IMAGE"
 docker tag "$BASE_IMAGE" base-image

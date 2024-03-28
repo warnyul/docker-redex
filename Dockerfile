@@ -1,8 +1,5 @@
 FROM base-image
 
-LABEL maintainer="Balázs Varga <warnyul@gmail.com>"
-LABEL description="Facebook's Android Bytecode Optimizer"
-
 ARG REDEX_BRANCH="stable"
 
 # Install redex
@@ -24,5 +21,7 @@ RUN autoreconf -ivf && \
     rm -rf redex.tar.gz
 
 RUN ls -al >&2
+
+RUN which redex >&2
 
 CMD ["redex"]

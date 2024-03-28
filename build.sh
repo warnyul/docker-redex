@@ -72,7 +72,7 @@ fi
 
 # Build
 COMMIT_HASH=$(git submodule status | grep "redex_${REDEX_BRANCH}" | cut -d' ' -f2)
-BASE_IMAGE="warnyul/android-build-tools:${BUILD_TOOLS_VERSION}-bionic-openjdk17"
+BASE_IMAGE="warnyul/android-build-tools:${BUILD_TOOLS_VERSION}-jammy-openjdk17"
 docker pull "$BASE_IMAGE"
 docker tag "$BASE_IMAGE" base-image
 VERSION="${REDEX_BRANCH}-${COMMIT_HASH}-androidbuildtools${BUILD_TOOLS_VERSION}-jammy-openjdk17"

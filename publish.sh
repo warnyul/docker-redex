@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 
-set -eE -o functrace
-
-failure() {
-  local -r lineno=$1
-  local -r msg=$2
-  echo "Failed at ${lineno}: ${msg}"
-}
+set -e
 
 function publish() {
     local -r matrixItem="$1"
@@ -20,8 +14,7 @@ function publish() {
         local latestArg=""
     fi
 
-    ./build.sh --update --push --channel="$channel" --build-tools-version="$androidBuildToolsVersion" $latestArg
+    ./build.sh --push --channel="$channel" --build-tools-version="$androidBuildToolsVersion" $latestArg
 }
 
-trap 'failure ${LINENO} "$BASH_COMMAND"' ERR
 publish $@

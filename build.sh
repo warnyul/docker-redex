@@ -14,15 +14,7 @@ read -r -d '' USAGE <<- EOM
     -h, --help \t Print usage description\n
 EOM
 
-set -eE -o functrace
-
-failure() {
-  local -r lineno=$1
-  local -r msg=$2
-  echo "Failed at ${lineno}: ${msg}"
-}
-
-trap 'failure ${LINENO} "$BASH_COMMAND"' ERR
+set -e
 
 IMAGE_NAME=redex
 IMAGE=warnyul/$IMAGE_NAME
@@ -73,7 +65,7 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-if [[ "$UPDATE_REDEX" == "true" ]]; then
+if [ "$UPDATE_REDEX" == "true" ]; then
     git submodule update --init
     git submodule update --remote
 fi

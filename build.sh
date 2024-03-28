@@ -24,7 +24,7 @@ LATEST=false
 PUSH=false
 UPDATE_REDEX=false
 REDEX_BRANCH=stable
-BUILD_TOOLS_VERSION=24.0.1
+BUILD_TOOLS_VERSION=34.0.0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -65,24 +65,19 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-VERSION_PREFIX=$REDEX_BRANCH
-
-if [[ ${UPDATE_REDEX} ]]; then
+if [[ "$UPDATE_REDEX" == "true" ]]; then
     git submodule update --init
     git submodule update --remote
 fi
 
 # Build
-COMMIT_HASH=$(git ls-tree "$REDEX_BRANCH" redex | cut -f 1 | cut -f 3 -d' ')
+COMMIT_HASH=$(git submodule status | grep "redex_${REDEX_BRANCH}" | cut -d' ' -f2)
 BASE_IMAGE="warnyul/android-build-tools:${BUILD_TOOLS_VERSION}-bionic-openjdk17"
 docker pull "$BASE_IMAGE"
 docker tag "$BASE_IMAGE" base-image
-VERSION="${VERSION_PREFIX}-${COMMIT_HASH}-androidbuildtools${BUILD_TOOLS_VERSION}-bionic-openjdk17"
-NO_CACHE_ARG=""
-if [ "$PUSH" == "true" ]; then
-    NO_CACHE_ARG="--no-cache"
-fi
-docker build $NO_CACHE_ARG \
+VERSION="${REDEX_BRANCH}-${COMMIT_HASH}-androidbuildtools${BUILD_TOOLS_VERSION}-jammy-openjdk17"
+
+docker build \
     --build-arg="${REDEX_BRANCH}" \
     --build-arg="${BUILD_TOOLS_VERSION}" \
     -t "${IMAGE}:${VERSION}" .

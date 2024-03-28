@@ -1,8 +1,5 @@
 FROM base-image
 
-LABEL maintainer="Balázs Varga <warnyul@gmail.com>"
-LABEL description="Facebook's Android Bytecode Optimizer"
-
 ARG REDEX_BRANCH="stable"
 
 # Install redex
@@ -19,10 +16,13 @@ RUN autoreconf -ivf && \
     ./configure --enable-protobuf && \
     make && \
     make install && \
-    make clean && \
-    rm -rf boost_1_71_0.tar.bz2 && \
-    rm -rf redex.tar.gz
+    make clean
 
-RUN ls -al >&2
+WORKDIR /
+
+RUN apt-get -y autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /redex
 
 CMD ["redex"]

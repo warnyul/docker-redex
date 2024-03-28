@@ -36,9 +36,9 @@ function generateBuildMatrix() {
     local matrix=()
 
     for CHANNEL in ${channels[@]}; do
-        local redexCommitHash=$(git ls-tree HEAD "redex_${CHANNEL}" | cut -f 1 | cut -f 3 -d' ')
+        local redexCommitHash=$(git submodule status | grep "redex_${CHANNEL}" | cut -d' ' -f2)
         while read -r line; do
-            local dockerImageVersion="${CHANNEL}-${redexCommitHash}-androidbuildtools${line}-bionic-openjdk17"
+            local dockerImageVersion="${CHANNEL}-${redexCommitHash}-androidbuildtools${line}-jammy-openjdk17"
             if [ "$(grep "\b${dockerImageVersion/-/\-}\b" <<< $tags)" == "" ]; then
                 local isLatest=false
                 [[ "$line" == "$latest" && "$CHANNEL" == "stable" ]] && isLatest=true

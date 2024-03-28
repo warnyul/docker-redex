@@ -24,7 +24,7 @@ LATEST=false
 PUSH=false
 UPDATE_REDEX=false
 REDEX_BRANCH=stable
-BUILD_TOOLS_VERSION=24.0.1
+BUILD_TOOLS_VERSION=34.0.0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -75,7 +75,7 @@ COMMIT_HASH=$(git submodule status | grep "redex_${REDEX_BRANCH}" | cut -d' ' -f
 BASE_IMAGE="warnyul/android-build-tools:${BUILD_TOOLS_VERSION}-bionic-openjdk17"
 docker pull "$BASE_IMAGE"
 docker tag "$BASE_IMAGE" base-image
-VERSION="${REDEX_BRANCH}-${COMMIT_HASH}-androidbuildtools${BUILD_TOOLS_VERSION}-bionic-openjdk17"
+VERSION="${REDEX_BRANCH}-${COMMIT_HASH}-androidbuildtools${BUILD_TOOLS_VERSION}-jammy-openjdk17"
 
 docker build \
     --build-arg="${REDEX_BRANCH}" \

@@ -14,7 +14,15 @@ read -r -d '' USAGE <<- EOM
     -h, --help \t Print usage description\n
 EOM
 
-set -e
+set -eE -o functrace
+
+failure() {
+  local -r lineno=$1
+  local -r msg=$2
+  echo "Failed at ${lineno}: ${msg}"
+}
+
+trap 'failure ${LINENO} "$BASH_COMMAND"' ERR
 
 IMAGE_NAME=redex
 IMAGE=warnyul/$IMAGE_NAME

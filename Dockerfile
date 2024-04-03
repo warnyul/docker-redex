@@ -10,6 +10,12 @@ WORKDIR /redex
 
 RUN ./setup_oss_toolchain.sh
 
+RUN apt install -q --no-install-recommends -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt -y remove python3 && \
+    apt install -q --no-install-recommends -y python3.7 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2
+
 RUN ldconfig
 
 RUN autoreconf -ivf && \

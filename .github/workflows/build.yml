@@ -20,4 +20,4 @@ jobs:
       - name: Build the Docker image
         shell: bash
         run: |
-          ./build.sh
+          ./build.sh --testing

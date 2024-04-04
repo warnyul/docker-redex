@@ -11,6 +11,7 @@ read -r -d '' USAGE <<- EOM
     -lp --local-push \t Push to a local repository\n
     -l, --latest \t Tag image as latest
     -p, --push \t Push image to docker hub\n
+    -t, --testing \t Run tests during docker build\n
     -h, --help \t Print usage description\n
 EOM
 
@@ -25,6 +26,7 @@ PUSH=false
 UPDATE_REDEX=false
 REDEX_BRANCH=stable
 BUILD_TOOLS_VERSION=34.0.0
+RUN_TESTS=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -56,6 +58,9 @@ while [[ $# -gt 0 ]]; do
         -p|--push)
             PUSH=true
         ;;
+        -t|--testing)
+            RUN_TESTS=true
+        ;;
         -h|--help|*)
             echo -e "\n Unknown argument: '$1'.\n See './build.sh --help'.\n"
             echo -e "$USAGE"
@@ -65,7 +70,7 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
-if [ "$UPDATE_REDEX" == "true" ]; then
+if [[ "$UPDATE_REDEX" == "true" ]]; then
     git submodule update --init
     git submodule update --remote
 fi
@@ -78,23 +83,23 @@ docker tag "$BASE_IMAGE" base-image
 VERSION="${REDEX_BRANCH}-${COMMIT_HASH}-androidbuildtools${BUILD_TOOLS_VERSION}-bionic-openjdk17"
 
 docker build \
-    --build-arg="${REDEX_BRANCH}" \
-    --build-arg="${BUILD_TOOLS_VERSION}" \
+    --build-arg="REDEX_BRANCH=${REDEX_BRANCH}" \
+    --build-arg="RUN_TESTS=${RUN_TESTS}" \
     -t "${IMAGE}:${VERSION}" .
 
 # Publish to a local repo
-if [ "${LOCAL_PUSH}" == "true" ]; then
+if [[ "${LOCAL_PUSH}" == "true" ]]; then
     docker run -d -p 5000:5000 --restart=always --name registry registry 2> /dev/null
     docker tag "${IMAGE}:${VERSION}" "${LOCAL_IMAGE}:${VERSION}"
     docker tag "${IMAGE}:${VERSION}" ${LOCAL_IMAGE}
     docker push ${LOCAL_IMAGE}
 fi
 
-if [ "$LATEST" == "true" ]; then
+if [[ "$LATEST" == "true" ]]; then
     docker tag "${IMAGE}:${VERSION}" "${IMAGE}:latest"
 fi
 
 # Publish to Docker Hub
-if [ "$PUSH" == "true" ]; then
+if [[ "$PUSH" == "true" ]]; then
     docker image push --all-tags "$IMAGE"
 fi

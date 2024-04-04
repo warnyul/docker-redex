@@ -1,6 +1,7 @@
 FROM base-image
 
-ARG REDEX_BRANCH="stable"
+ARG REDEX_BRANCH=stable
+ARG RUN_TESTS=false
 
 # Install redex
 
@@ -8,7 +9,7 @@ COPY redex_${REDEX_BRANCH} /redex
 
 WORKDIR /redex
 
-RUN ./setup_oss_toolchain.sh
+RUN ./setup_oss_toolchain.sh && apt-get install -q --no-install-recommends -y curl
 
 RUN apt install -q --no-install-recommends -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa && \
@@ -21,8 +22,11 @@ RUN ldconfig
 RUN autoreconf -ivf && \
     ./configure --enable-protobuf && \
     make && \
-    make install && \
-    make clean
+    make install
+    
+RUN [ "${RUN_TESTS}" = "true" ] && make -j4 check
+
+RUN make clean
 
 WORKDIR /
 

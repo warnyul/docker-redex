@@ -29,6 +29,7 @@ function readBuildToolsVersions() {
 # Returns a json array of items. Format of the items: "{redex-branch}@{agp-version}@{isLatest}"
 #
 function generateBuildMatrix() {
+    local -r force="$1"
     local -r buildToolsVersions=$(readBuildToolsVersions | sort | uniq )
     local -r latest=$(echo "$buildToolsVersions" | grep -v '-' | tail -n 1)
     local -r channels=(stable main)
@@ -39,7 +40,7 @@ function generateBuildMatrix() {
         local redexCommitHash=$(git submodule status | grep "redex_${CHANNEL}" | cut -d' ' -f2)
         while read -r line; do
             local dockerImageVersion="${CHANNEL}-${redexCommitHash}-androidbuildtools${line}-bionic-openjdk17"
-            if [ "$(grep "\b${dockerImageVersion/-/\-}\b" <<< $tags)" == "" ]; then
+            if [[ "$force" == "true" || "$(grep "\b${dockerImageVersion/-/\-}\b" <<< $tags)" == "" ]]; then
                 local isLatest=false
                 [[ "$line" == "$latest" && "$CHANNEL" == "stable" ]] && isLatest=true
                 matrix+=("\"${CHANNEL}@${line}@${isLatest}\"")          
@@ -53,7 +54,7 @@ function generateBuildMatrix() {
 }
 
 if [ -z $GITHUB_OUTPUT ]; then
-    generateBuildMatrix
+    generateBuildMatrix $@
 else
-   echo "BUILD_MATRIX=$(generateBuildMatrix)" >> "$GITHUB_OUTPUT"
+   echo "BUILD_MATRIX=$(generateBuildMatrix $@)" >> "$GITHUB_OUTPUT"
 fi

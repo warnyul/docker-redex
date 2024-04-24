@@ -19,7 +19,7 @@ RUN autoreconf -ivf && \
     make && \
     make install
     
-RUN [ "${RUN_TESTS}" = "true" ] && make -j4 check
+RUN [ "${RUN_TESTS}" = "true" ] && make check
 
 RUN make clean
 

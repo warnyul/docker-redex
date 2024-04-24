@@ -25,7 +25,7 @@ LATEST=false
 PUSH=false
 UPDATE_REDEX=false
 REDEX_BRANCH=stable
-BUILD_TOOLS_VERSION=33.0.3 # latest version which contains dx command in build tools
+BUILD_TOOLS_VERSION=30.0.3 # latest version which contains dx command in build tools. dx is required for execute tests.
 RUN_TESTS=false
 
 while [[ $# -gt 0 ]]; do

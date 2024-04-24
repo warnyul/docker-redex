@@ -25,7 +25,7 @@ LATEST=false
 PUSH=false
 UPDATE_REDEX=false
 REDEX_BRANCH=stable
-BUILD_TOOLS_VERSION=34.0.0
+BUILD_TOOLS_VERSION=33.0.3 # latest version which contains dx command in build tools
 RUN_TESTS=false
 
 while [[ $# -gt 0 ]]; do

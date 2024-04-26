@@ -37,6 +37,12 @@ jobs:
       matrix:
         channelAndAgp: ${{ fromJson(needs.buildMatrix.outputs.BUILD_MATRIX) }}
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@fc881a613ad2a34aca9c9624518214ebc21dfc0c # v10
+        with:
+          remove-dotnet: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           submodules: true

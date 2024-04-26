@@ -19,6 +19,11 @@ RUN autoreconf -ivf && \
     make && \
     make install
     
+RUN [ "${RUN_TESTS}" = "true" ] && ( \
+        [ command -v dx >/dev/null 2>&1 ] || \
+        apt-get install -y --no-install-recommends dalvik-exchange && \
+        ln -s /usr/bin/dalvik-exchange /usr/local/bin/dx \
+    )
 RUN [ "${RUN_TESTS}" = "true" ] && make check
 
 RUN make clean

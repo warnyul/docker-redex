@@ -15,11 +15,13 @@ jobs:
       contents: read
     steps:
       - name: Maximize build space
-        uses: easimon/maximize-build-space@fc881a613ad2a34aca9c9624518214ebc21dfc0c # v10
+        uses: AdityaGarg8/remove-unwanted-software@e2a42bc9a15f8414a9078f38b702de2a2976733d # v3
         with:
-          remove-dotnet: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
+          remove-dotnet: true
+          remove-haskell: true
+          remove-codeql: true
+          remove-cached-tools: true
+          remove-swapfile: true
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
         with:
           submodules: true

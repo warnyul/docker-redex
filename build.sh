@@ -15,7 +15,7 @@ read -r -d '' USAGE <<- EOM
     -h, --help \t Print usage description\n
 EOM
 
-set -e
+set -eo pipefail
 
 IMAGE_NAME=redex
 IMAGE=warnyul/$IMAGE_NAME
@@ -25,7 +25,7 @@ LATEST=false
 PUSH=false
 UPDATE_REDEX=false
 REDEX_BRANCH=stable
-BUILD_TOOLS_VERSION=30.0.3 # latest version which contains dx command in build tools. dx is required for execute tests.
+BUILD_TOOLS_VERSION=34.0.0
 RUN_TESTS=false
 
 while [[ $# -gt 0 ]]; do

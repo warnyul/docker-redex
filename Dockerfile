@@ -6,27 +6,20 @@ ARG RUN_TESTS=false
 # Install redex
 
 COPY redex_${REDEX_BRANCH} /redex
+COPY runTests.sh /redex
 
 WORKDIR /redex
 
 RUN ./setup_oss_toolchain.sh && \
-    apt-get install -q --no-install-recommends -y curl
-
-RUN ldconfig
+    apt-get install -q --no-install-recommends -y curl && \
+    ldconfig
 
 RUN autoreconf -ivf && \
     ./configure --enable-protobuf && \
     make && \
-    make install
-    
-RUN [ "${RUN_TESTS}" = "true" ] && ( \
-        [ command -v dx >/dev/null 2>&1 ] || \
-        apt-get install -y --no-install-recommends dalvik-exchange && \
-        ln -s /usr/bin/dalvik-exchange /usr/local/bin/dx \
-    )
-RUN [ "${RUN_TESTS}" = "true" ] && make check
-
-RUN make clean
+    make install && \
+    ./runTests.sh "${RUN_TESTS}" && \
+    make clean
 
 WORKDIR /
 

@@ -18,7 +18,7 @@ jobs:
     outputs:
       BUILD_MATRIX: ${{ steps.generate.outputs.BUILD_MATRIX }}
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           submodules: true
       - name: Generate build matrix
@@ -46,7 +46,7 @@ jobs:
           remove-large-packages: true
           remove-cached-tools: true
           remove-swapfile: true
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           submodules: true
       - name: Docker Hub login
